@@ -1,3 +1,5 @@
+import { starWarsStore, starWarsActions } from "./starWarsStore";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -12,7 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			...starWarsStore,
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -37,7 +40,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
-			}
+			},
+			useFetch: async (endpoint, method = "GET") => {
+				let url = "https://www.swapi.tech/api" + endpoint;
+				let response = await fetch(url, {
+				  method: method,
+				  headers: { "Content-Type": "application/json" },
+				  body: null,
+				});
+		
+				let respuestaJson = await response.json();
+		
+				return { respuestaJson, response };
+			  },
+			  ...starWarsActions(getStore, getActions, setStore),
+
 		}
 	};
 };
