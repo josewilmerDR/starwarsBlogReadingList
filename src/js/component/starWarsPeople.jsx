@@ -30,6 +30,16 @@ const StarWarsPeople = () => {
     return favorites.some((fav) => fav.uid === character.uid);
   };
 
+  const handleFavoriteClick = (character) => {
+    if (isFavorite(character)) {
+      actions.removeFavorite(character);
+    } else {
+      actions.addFavorite(character);
+    }
+  };
+
+
+
   const handleShowMore = () => {
     actions.loadMoreCharacters();
   };
@@ -63,7 +73,7 @@ const StarWarsPeople = () => {
                     <i
                       className={`fa-solid fa-heart ${isFavorite(item) ? "text-danger" : "text-secondary"
                         }`}
-                      onClick={() => actions.addFavorite(item)}></i>
+                      onClick={() => handleFavoriteClick(item)}></i>
                   </div>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
+import genericImagen from "../../img/starWarsImage.jpg"
 
 const CharacterDetails = () => {
   const { id } = useParams();
@@ -15,7 +16,7 @@ const CharacterDetails = () => {
       setCharacter(data.result.properties);
       //   console.log(data.result.properties)
       setLoading(false);
-    };
+    }; 
     fetchCharacter();
   }, [id]);
 
@@ -23,12 +24,16 @@ const CharacterDetails = () => {
     return <h1>Cargando...</h1>;
   }
 
+  const handleImageError = (e) => {
+    e.target.src = genericImagen;
+  };
+
   return (
     <div className="container">
       <div className="card mt-5 d-flex">
         <div className="card-body">
           <h5 className="card-title">{"Name: "+ character.name}</h5>
-          <img src={store.getImageUrl(id)} className="card-img-top" alt="..." />
+          <img src={store.getImageUrl(id)} className="card-img-top" alt={id.name} onError={handleImageError} />
           <h5 className="card-title">Otras caracteristicas</h5>
           <p className="card-text">Height: {character.height} cm</p>
           <p className="card-text">Mass: {character.mass} kg</p>

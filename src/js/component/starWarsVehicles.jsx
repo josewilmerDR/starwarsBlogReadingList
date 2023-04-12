@@ -7,6 +7,7 @@ import genericImagen from "../../img/starWarsImage.jpg"
 
 const StarWarsVehicles = () => {
   const { store, actions } = useContext(Context);
+  // const { displayedVehicles, nextUrl } = store; //Una forma de importar solo unas variables desde el el store.
 
   useEffect(() => {
     if (store.loadingVehicles) {
@@ -14,22 +15,26 @@ const StarWarsVehicles = () => {
     }
   }, []);
 
-  //relacionado con favorite.
-  //Agrega un estado local para cada personaje en el componente StarWarsVehicles:
-  const [favorites, setFavorites] = useState([]);
+  //MANEJO DE FAVORITOS
+  const [favoritesVehicles, setFavoritesVehicles] = useState([]);
 
-  //Actualiza el estado local de favoritos cada vez que se agregue o elimine un personaje de la lista de favoritos. 
-  //Esto se puede hacer utilizando useEffect y escuchando los cambios en "store.favorites"
   useEffect(() => {
-    setFavorites(store.favorites);
-  }, [store.favorites]);
+    setFavoritesVehicles(store.favoritesVehicles);
+  }, [store.favoritesVehicles]);
 
-  //Determina si el personaje es un favorito y muestra el ícono del corazón en rojo si es así. 
-  //Puedes hacerlo utilizando una función que comprueba si el personaje está en la lista de favoritos y aplicando una clase CSS condicionalmente:
-  const isFavorite = (character) => {
-    return favorites.some((fav) => fav.uid === character.uid);
+  const isFavoriteVehicle = (vehicle) => {
+    return favoritesVehicles.some((fav) => fav.uid === vehicle.uid);
   };
 
+  const handleFavoriteClick = (vehicle) => {
+    if (isFavoriteVehicle(vehicle)) {
+      actions.removeFavoriteVehicle(vehicle);
+    } else {
+      actions.addFavoriteVehicle(vehicle);
+    }
+  };
+
+  //OTROS
   const handleShowMore = () => {
     actions.loadMoreVehicles();
   };
@@ -46,7 +51,7 @@ const StarWarsVehicles = () => {
     <>
       <div className="container">
         <div className="row">
-          {store.displayedVehicles.map((item, index) => (
+          {store.displayedVehicles && store.displayedVehicles.length > 0 ? store.displayedVehicles.map((item, index) => (
             <div key={index} className="col-md-4 col-sm-6 my-3">
               <div className="card">
                 <img src={store.getImageUrlVehicle(item.uid)} className="card-img-top" alt={item.name} onError={handleImageError} />
@@ -61,14 +66,14 @@ const StarWarsVehicles = () => {
                     <Link to={`/vehicles/${item.uid}`} className="btn btn-primary">Learn more</Link>
                     {/* <i onClick={() => actions.addFavorite(item)} className="fa-solid fa-heart"></i> */}
                     <i
-                      className={`fa-solid fa-heart ${isFavorite(item) ? "text-danger" : "text-secondary"
+                      className={`fa-solid fa-heart ${isFavoriteVehicle(item) ? "text-danger" : "text-secondary"
                         }`}
-                      onClick={() => actions.addFavorite(item)}></i>
+                      onClick={() => handleFavoriteClick(item)}></i>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
+          )) : <h3>NO hay datos que mostrar</h3>}
         </div>
         {store.nextVehiclesUrl && (
           <div className="text-center mt-3">
@@ -77,12 +82,101 @@ const StarWarsVehicles = () => {
             </button>
           </div>
         )}
-      </div >
+      </div>
     </>
   );
 };
 
 export default StarWarsVehicles;
+
+
+
+
+// import React, { useContext, useEffect, useState } from "react";
+// import "../../styles/starWars.css";
+// import { Link } from "react-router-dom";
+// import { Context } from "../store/appContext";
+// import genericImagen from "../../img/starWarsImage.jpg"
+
+
+// const StarWarsVehicles = () => {
+//   const { store, actions } = useContext(Context);
+
+//   useEffect(() => {
+//     if (store.loadingVehicles) {
+//       actions.loadVehiclesData();
+//     }
+//   }, []);
+
+//   //relacionado con favorite.
+//   //Agrega un estado local para cada personaje en el componente StarWarsVehicles:
+//   const [favorites, setFavorites] = useState([]);
+
+//   //Actualiza el estado local de favoritos cada vez que se agregue o elimine un personaje de la lista de favoritos. 
+//   //Esto se puede hacer utilizando useEffect y escuchando los cambios en "store.favorites"
+//   useEffect(() => {
+//     setFavorites(store.favorites);
+//   }, [store.favorites]);
+
+//   //Determina si el personaje es un favorito y muestra el ícono del corazón en rojo si es así. 
+//   //Puedes hacerlo utilizando una función que comprueba si el personaje está en la lista de favoritos y aplicando una clase CSS condicionalmente:
+//   const isFavorite = (character) => {
+//     return favorites.some((fav) => fav.uid === character.uid);
+//   };
+
+//   const handleShowMore = () => {
+//     actions.loadMoreVehicles();
+//   };
+
+//   if (store.loadingVehicles) {
+//     return <h1>Cargando...</h1>;
+//   }
+
+//   const handleImageError = (e) => {
+//     e.target.src = genericImagen;
+//   };
+
+//   return (
+//     <>
+//       <div className="container">
+//         <div className="row">
+//           {store.displayedVehicles.map((item, index) => (
+//             <div key={index} className="col-md-4 col-sm-6 my-3">
+//               <div className="card">
+//                 <img src={store.getImageUrlVehicle(item.uid)} className="card-img-top" alt={item.name} onError={handleImageError} />
+//                 <div className="card-body">
+//                   <h5 className="card-title">{item.name}</h5>
+//                   <p className="card-text">
+//                     This is a wider card with supporting text below as a
+//                     natural lead-in to additional content. This content is a
+//                     little bit longer.
+//                   </p>
+//                   <div className="icon">
+//                     <Link to={`/vehicles/${item.uid}`} className="btn btn-primary">Learn more</Link>
+//                     {/* <i onClick={() => actions.addFavorite(item)} className="fa-solid fa-heart"></i> */}
+//                     <i
+//                       className={`fa-solid fa-heart ${isFavorite(item) ? "text-danger" : "text-secondary"
+//                         }`}
+//                       onClick={() => actions.addFavorite(item)}></i>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//         {store.nextVehiclesUrl && (
+//           <div className="text-center mt-3">
+//             <button className="btn btn-primary" onClick={handleShowMore}>
+//               Show more vehicles
+//             </button>
+//           </div>
+//         )}
+//       </div >
+//     </>
+//   );
+// };
+
+// export default StarWarsVehicles;
 
 
 

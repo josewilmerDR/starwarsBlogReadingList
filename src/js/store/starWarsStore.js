@@ -12,6 +12,7 @@ export const starWarsStore = {
   //PLANET STORE
   planets: [],
   displayedPlanets: [],
+  favoritesPlanets: [], // Añade la lista de favoritos
   nextPlanetsUrl: "",
   loadingPlanets: true,
   getImageUrlPlanet: (uid) =>
@@ -20,6 +21,7 @@ export const starWarsStore = {
   //VEHICLE STORE
   vehicles: [],
   displayedVehicles: [],
+  favoritesVehicles: [], // Añade la lista de favoritos
   nextVehiclesUrl: "",
   loadingVehicles: true,
   getImageUrlVehicle: (uid) =>
@@ -128,6 +130,34 @@ export function starWarsActions(getStore, getActions, setStore) {
       }
     },
 
+    addFavoritePlanet: (planet) => {
+      const store = getStore();
+
+      // Verifica si el personaje ya está en la lista de favoritos
+      const isAlreadyFavorite = store.favoritesPlanets.some(
+        (fav) => fav.uid === planet.uid
+      );
+
+      // Si el planeta no está en la lista de favoritos, agrégalo
+      if (!isAlreadyFavorite) {
+        setStore({
+          ...store,
+          favoritesPlanets: [...store.favoritesPlanets, planet],
+        });
+      } else {
+        // Puedes mostrar un mensaje o manejar la situación como desees si ya es un favorito
+        console.log("Este planeta ya está en la lista de favoritos.");
+      }
+    },
+
+    removeFavoritePlanet: (planet) => {
+      const store = getStore();
+      setStore({
+        ...store,
+        favoritesPlanets: store.favoritesPlanets.filter((fav) => fav.uid !== planet.uid),
+      });
+    },
+
 
     //VEHICLES ACTIONS
     loadVehiclesData: async () => {
@@ -152,6 +182,34 @@ export function starWarsActions(getStore, getActions, setStore) {
           nextVehiclesUrl: data.next,
         });
       }
+    },
+
+    addFavoriteVehicle: (vehicle) => {
+      const store = getStore();
+
+      // Verifica si el personaje ya está en la lista de favoritos
+      const isAlreadyFavorite = store.favoritesVehicles.some(
+        (fav) => fav.uid === vehicle.uid
+      );
+
+      // Si el planeta no está en la lista de favoritos, agrégalo
+      if (!isAlreadyFavorite) {
+        setStore({
+          ...store,
+          favoritesVehicles: [...store.favoritesVehicles, vehicle],
+        });
+      } else {
+        // Puedes mostrar un mensaje o manejar la situación como desees si ya es un favorito
+        console.log("Este planeta ya está en la lista de favoritos.");
+      }
+    },
+
+    removeFavoriteVehicle: (vehicle) => {
+      const store = getStore();
+      setStore({
+        ...store,
+        favoritesVehicles: store.favoritesVehicles.filter((fav) => fav.uid !== vehicle.uid),
+      });
     },
 
   };
