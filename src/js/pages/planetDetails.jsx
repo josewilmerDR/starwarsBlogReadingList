@@ -4,19 +4,20 @@ import { Context } from "../store/appContext";
 
 const PlanetDetails = () => {
   const { id } = useParams();
-  const [planet, setCharacter] = useState(null);
+  const [planet, setPlanet] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { store, actions } = useContext(Context)
+  
   useEffect(() => {
-    const fetchCharacter = async () => {
+    const fetchPlanets = async () => {
       const response = await fetch(`https://www.swapi.tech/api/planets/${id}`);
       const data = await response.json();
-      setCharacter(data.result.properties);
+      setPlanet(data.result.properties);
       //   console.log(data.result.properties)
       setLoading(false);
     };
-    fetchCharacter();
+    fetchPlanets();
   }, [id]);
 
   if (loading) {
@@ -28,15 +29,15 @@ const PlanetDetails = () => {
       <div className="card mt-5 d-flex">
         <div className="card-body">
           <h5 className="card-title">{"Name: "+ planet.name}</h5>
-          <img src={store.getImageUrl(id)} className="card-img-top" alt="..." />
+          <img src={store.getImageUrlPlanet(item.uid)} className="card-img-top" alt={item.name} onError={handleImageError}/>
           <h5 className="card-title">Otras caracteristicas</h5>
-          <p className="card-text">Height: {planet.height} cm</p>
-          <p className="card-text">Mass: {planet.mass} kg</p>
-          <p className="card-text">Hair color: {planet.hair_color}</p>
-          <p className="card-text">Skin color: {planet.skin_color}</p>
-          <p className="card-text">Eye color: {planet.eye_color}</p>
-          <p className="card-text">Birth year: {planet.birth_year}</p>
-          <p className="card-text">Gender: {planet.gender}</p>
+          <p className="card-text">Diameter: {planet.diameter} km</p>
+          <p className="card-text">Rotation_period: {planet.rotation_period} hr</p>
+          <p className="card-text">Orbital_period: {planet.orbital_period} days</p>
+          <p className="card-text">Gravity: {planet.gravity}</p>
+          <p className="card-text">Population: {planet.population}</p>
+          <p className="card-text">climate: {planet.climate}</p>
+          <p className="card-text">terrain: {planet.gender}</p>
         </div>
       </div>
     </div>
@@ -44,3 +45,20 @@ const PlanetDetails = () => {
 };
 
 export default PlanetDetails;
+
+
+
+// "properties": {
+//   "diameter": "10200",
+//   "rotation_period": "24",
+//   "orbital_period": "4818",
+//   "gravity": "1 standard",
+//   "population": "1000",
+//   "climate": "temperate, tropical",
+//   "terrain": "jungle, rainforests",
+//   "surface_water": "8",
+//   "created": "2023-04-11T17:33:05.664Z",
+//   "edited": "2023-04-11T17:33:05.664Z",
+//   "name": "Yavin IV",
+//   "url": "https://www.swapi.tech/api/planets/3"
+// },

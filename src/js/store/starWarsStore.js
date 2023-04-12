@@ -1,5 +1,6 @@
 // starWarsStore.js
 export const starWarsStore = {
+  //PEOPLE STORE.
   people: [],
   displayedPeople: [],
   favorites: [], // Añade la lista de favoritos
@@ -7,16 +8,48 @@ export const starWarsStore = {
   loading: true,
   getImageUrl: (uid) =>
     `https://starwars-visualguide.com/assets/img/characters/${uid}.jpg`,
+
+  //PLANET STORE
+  planets: [],
+  displayedPlanets: [],
+  nextPlanetsUrl: "",
+  loadingPlanets: true,
+  getImageUrlPlanet: (uid) =>
+    `https://starwars-visualguide.com/assets/img/planets/${uid}.jpg`,
+
+  //VEHICLE STORE
+  vehicles: [],
+  displayedVehicles: [],
+  nextVehiclesUrl: "",
+  loadingVehicles: true,
+  getImageUrlVehicle: (uid) =>
+    `https://starwars-visualguide.com/assets/img/vehicles/${uid}.jpg`,
 };
 
 export function starWarsActions(getStore, getActions, setStore) {
+  //FETCH PEOPOPLE.
   const fetchPeople = async (url) => {
     const response = await fetch(url);
     const data = await response.json();
     return data;
   };
 
+  //FETCH PLANET
+  const fetchPlanets = async (url) => {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  };
+
+    //FETCH VEHICLE
+    const fetchVehicles = async (url) => {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data;
+    };
+
   return {
+    //PEOPLE ACTIONS
     loadData: async () => {
       const data = await fetchPeople("https://www.swapi.tech/api/people/");
       setStore({
@@ -40,7 +73,7 @@ export function starWarsActions(getStore, getActions, setStore) {
         });
       }
     },
-    
+
     addFavorite: (character) => {
       const store = getStore();
 
@@ -68,5 +101,58 @@ export function starWarsActions(getStore, getActions, setStore) {
         favorites: store.favorites.filter((fav) => fav.uid !== character.uid),
       });
     },
+
+    //PLANETS ACTIONS
+
+    loadPlanetsData: async () => {
+      const data = await fetchPlanets("https://www.swapi.tech/api/planets/");
+      setStore({
+        planets: data.results,
+        displayedPlanets: data.results.slice(0, 10),
+        nextPlanetsUrl: data.next,
+        loadingPlanets: false,
+      });
+    },
+    loadMorePlanets: async () => {
+      const store = getStore();
+      if (store.nextPlanetsUrl) {
+        const data = await fetchPlanets(store.nextPlanetsUrl);
+        setStore({
+          planets: [...store.planets, ...data.results],
+          displayedPlanets: [
+            ...store.displayedPlanets,
+            ...data.results.slice(0, 10),
+          ],
+          nextPlanetsUrl: data.next,
+        });
+      }
+    },
+
+
+    //VEHICLES ACTIONS
+    loadVehiclesData: async () => {
+      const data = await fetchVehicles("https://www.swapi.tech/api/vehicles/");
+      setStore({
+        vehicles: data.results,
+        displayedVehicles: data.results.slice(0, 10),
+        nextVehiclesUrl: data.next,
+        loadingVehicles: false,
+      });
+    },
+    loadMoreVehicles: async () => {
+      const store = getStore();
+      if (store.nextVehiclesUrl) {
+        const data = await fetchVehicles(store.nextVehiclesUrl);
+        setStore({
+          vehicles: [...store.vehicles, ...data.results],
+          displayedVehicles: [
+            ...store.displayedVehicles,
+            ...data.results.slice(0, 10),
+          ],
+          nextVehiclesUrl: data.next,
+        });
+      }
+    },
+
   };
 }

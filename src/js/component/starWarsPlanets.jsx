@@ -1,67 +1,61 @@
-import React, { useEffect, useState } from "react";
-import "../../styles/starWars.css"
+import React, { useContext, useEffect } from "react";
+import "../../styles/starWars.css";
+import { Link } from "react-router-dom";
+import { Context } from "../store/appContext";
+import genericImagen from "../../img/starWarsImage.jpg"
+
 
 const StarWarsPlanets = () => {
-  const [planets, setPlanets] = useState([]);
-  const [displayedPlanets, setDisplayedPlanets] = useState([]);
-  const [nextUrl, setNextUrl] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  const fetchPlanets = async (url) => {
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
-  };
+  const { store, actions } = useContext(Context);
+  // const { displayedPlanets, nextUrl } = store; //Una forma de importar solo unas variables desde el el store.
 
   useEffect(() => {
-    const loadData = async () => {
-      const data = await fetchPlanets("https://www.swapi.tech/api/planets/");
-      setPlanets(data.results);
-      setDisplayedPlanets(data.results.slice(0, 10));
-      setNextUrl(data.next);
-      setLoading(false);
-    };
-    loadData();
+    if (store.loadingPlanets) {
+      actions.loadPlanetsData();
+    }
   }, []);
 
-  const handleShowMore = async () => {
-    if (nextUrl) {
-      const data = await fetchPlanets(nextUrl);
-      setPlanets([...planets, ...data.results]);
-      setDisplayedPlanets([...displayedPlanets, ...data.results.slice(0, 10)]);
-      setNextUrl(data.next);
-    }
+  const handleShowMore = () => {
+    actions.loadMorePlanets();
   };
 
-  if (loading) {
+  if (store.loadingPlanets) {
     return <h1>Cargando...</h1>;
   }
+
+  const handleImageError = (e) => {
+    e.target.src = genericImagen;
+  };
 
   return (
     <>
       <div className="container">
         <div className="row">
-          {displayedPlanets && displayedPlanets.length > 0 ? displayedPlanets.map((item, index) => (
+          {store.displayedPlanets && store.displayedPlanets.length > 0 ? store.displayedPlanets.map((item, index) => (
             <div key={index} className="col-md-4 col-sm-6 my-3">
               <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
+                <img src={store.getImageUrlPlanet(item.uid)} className="card-img-top" alt={item.name} onError={handleImageError} />
                 <div className="card-body">
                   <h5 className="card-title">{item.name}</h5>
-                  <p    className="card-text">
+                  <p className="card-text">
                     This is a wider card with supporting text below as a
                     natural lead-in to additional content. This content is a
                     little bit longer.
                   </p>
                   <div className="icon">
-                  <a href="#" className="btn btn-primary">Learn more</a>
-                  <i className="fa-solid fa-heart"></i>
-                  </div> 
+                    <Link to={`/planets/${item.uid}`} className="btn btn-primary">Learn more</Link>
+                    {/* <i onClick={() => actions.addFavorite(item)} className="fa-solid fa-heart"></i> */}
+                    <i
+                      className={`fa-solid fa-heart ${isFavorite(item) ? "text-danger" : "text-secondary"
+                        }`}
+                      onClick={() => actions.addFavorite(item)}></i>
+                  </div>
                 </div>
               </div>
-            </div> 
-          )):<h3>NO hay datos que mostrar</h3>}
+            </div>
+          )) : <h3>NO hay datos que mostrar</h3>}
         </div>
-        {nextUrl && (
+        {store.nextUrl && (
           <div className="text-center mt-3">
             <button className="btn btn-primary" onClick={handleShowMore}>
               Show more planets

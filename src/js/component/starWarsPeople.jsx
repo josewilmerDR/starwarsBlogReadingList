@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import "../../styles/starWars.css";
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
+import genericImagen from "../../img/starWarsImage.jpg"
+
 
 const StarWarsPeople = () => {
   const { store, actions } = useContext(Context);
@@ -36,6 +38,10 @@ const StarWarsPeople = () => {
     return <h1>Cargando...</h1>;
   }
 
+  const handleImageError = (e) => {
+    e.target.src = genericImagen;
+  };
+
   return (
     <>
       <div className="container">
@@ -43,7 +49,7 @@ const StarWarsPeople = () => {
           {store.displayedPeople.map((item, index) => (
             <div key={index} className="col-md-4 col-sm-6 my-3">
               <div className="card">
-                <img src={store.getImageUrl(item.uid)} className="card-img-top" alt="..." />
+                <img src={store.getImageUrl(item.uid)} className="card-img-top" alt={item.name} onError={handleImageError} />
                 <div className="card-body">
                   <h5 className="card-title">{item.name}</h5>
                   <p className="card-text">
