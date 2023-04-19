@@ -13,6 +13,9 @@ import Footer from "./component/footer";
 import CharacterDetails from "./pages/characterDetails.jsx";
 import PlanetDetails from "./pages/planetDetails.jsx"
 import VehicleDetails from "./pages/vehicleDetails.jsx";
+import Login from "./pages/login.jsx";
+import Register from "./pages/register.jsx";
+import Info from "./pages/personalInformation.jsx";
 
 //create your first component
 const Layout = () => {
@@ -28,6 +31,9 @@ const Layout = () => {
 					<Routes>
 						<Route path="/" element={<Home />} />
 
+						<Route path="/register" element={<Register />} />
+						<Route path="/info" element={<Info />} />
+						<Route path="/login" element={<Login />} />
 						{/* <Route path="/demo" element={<Demo />} /> */}
 						{/* <Route path="/single/:theid" element={<Single />} /> */}
 						<Route path="/people/:id" element={<CharacterDetails />} />
