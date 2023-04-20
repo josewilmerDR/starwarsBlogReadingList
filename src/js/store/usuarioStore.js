@@ -55,7 +55,6 @@ export function usuarioActions(getStore, getActions, setStore) {
         localStorage.setItem("token", "")
         sessionStorage.setItem("token", "")
         setStore({...store, userLogin: false})
-        store.usuario = { msg: "login fallido" };
       }
       // setStore({
       //   ...store, usuario: {
